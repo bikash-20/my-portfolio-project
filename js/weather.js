@@ -1,7 +1,7 @@
 // ===== LIVE WEATHER (OpenWeatherMap) =====
 async function loadWeather() {
   try {
-    const r = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Dhaka&units=metric&appid=1926c1f86c487b32de625363a6372de0');
+    const r = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Dhaka&units=metric&appid=0aeba4fa4e8557301371ec85f6202f8a');
     const d = await r.json();
     if (d.main) {
       const temp = Math.round(d.main.temp);

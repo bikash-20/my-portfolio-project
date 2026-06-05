@@ -1,13 +1,15 @@
 {
-  "name": "my-portfolio",
+  "name": "bikash-portfolio",
   "version": "1.0.0",
   "private": true,
+  "description": "Personal portfolio site for Bikash Talukder — static front-end + Vercel serverless proxy for the Nexora AI chatbot.",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "npx --yes serve -l 3000 .",
+    "dev:api": "vercel dev",
+    "build": "echo Static site — no build step. Vercel deploys index.html, style.css, and js/ as-is.",
+    "start": "npx --yes serve -l 3000 ."
   },
-  "devDependencies": {
-    "vite": "^5.4.0"
+  "engines": {
+    "node": ">=18"
   }
 }

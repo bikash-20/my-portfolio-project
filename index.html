@@ -437,9 +437,9 @@ LET'S<br>TALK<br>CODE
 </div>
 
 
-<script>
 <script src="js/weather.js"></script>
 
+<script>
 // ===== LOCAL TIME =====
 function updateTime() {
   const now = new Date();
@@ -475,7 +475,9 @@ async function loadCF() {
 loadCF();
 
 // ===== LEETCODE (via unofficial stats API) =====
+</script>
 <script src="js/leetcode.js"></script>
+<script>
 
 // ===== DEV QUOTE =====
 const fallbackQuotes = [
@@ -1746,6 +1748,25 @@ function detectIntent(q) {
 }
 
 // ===== MAIN SEND MESSAGE (CLEAN RAG ROUTER) =====
+// ===== NEXORA AI (OpenRouter via Vercel /api/chat) =====
+const NEXORA_API_URL = '/api/chat';
+async function askNexoraAI(history) {
+  try {
+    const r = await fetch(NEXORA_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history })
+    });
+    const data = await r.json();
+    if (r.ok && data && data.reply) return data.reply;
+    console.warn('Nexora /api/chat:', r.status, data);
+    return null;
+  } catch (e) {
+    console.warn('Nexora fetch failed:', e);
+    return null;
+  }
+}
+
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text) return;
@@ -1789,8 +1810,13 @@ async function sendMessage() {
     } else if (intent === 'technews') {
       reply = await fetchTechNews(text);
     } else {
-      await new Promise(res => setTimeout(res, 700 + Math.random() * 400));
-      reply = generateSmartReply(text);
+      // No typed intent matched — ask the real Nexora AI (Vercel → OpenRouter).
+      const history = chatHistory.slice(-12).map(m => ({ role: m.role, content: m.content }));
+      const [aiReply] = await Promise.all([
+        askNexoraAI(history),
+        new Promise(res => setTimeout(res, 500 + Math.random() * 400)),
+      ]);
+      reply = aiReply || generateSmartReply(text);
     }
   } catch(err) {
     reply = "⚠️ Something went wrong. Please try again!";

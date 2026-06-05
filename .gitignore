@@ -1,4 +1,12 @@
 node_modules/
 dist/
 .env
+.env.local
+.env.*.local
+*.bak
+index.html.bak
+.vercel
 .DS_Store
+
+# Puku AI assistant local index (do not commit)
+.puku/
