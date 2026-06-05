@@ -10,14 +10,30 @@
 //   OPENROUTER_TITLE     optional   your site name (used for OpenRouter analytics)
 // =====================================================================
 
+// Verified against https://openrouter.ai/api/v1/models on 2026-06-05.
+// OpenRouter rotates free models frequently; this list is what is
+// actually :free right now. We always start with the user-configured
+// OPENROUTER_MODEL (or DEFAULT_MODEL) and only fall through this list.
 const DEFAULT_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
 // Sensible fallbacks if the free model is rate-limited / down.
 const MODEL_FALLBACKS = [
+  // Tier 1: strongest free models first
+  "openai/gpt-oss-120b:free",
+  "moonshotai/kimi-k2.6:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "qwen/qwen3-coder:free",
+  "z-ai/glm-4.5-air:free",
+  "qwen/qwen3-next-80b-a3b-instruct:free",
+  // Tier 2: mid-size fallbacks
+  "google/gemma-4-31b-it:free",
   "meta-llama/llama-3.3-70b-instruct:free",
-  "deepseek/deepseek-chat-v3-0324:free",
-  "google/gemini-2.0-flash-exp:free",
-  "qwen/qwen-2.5-72b-instruct:free",
+  "nousresearch/hermes-3-llama-3.1-405b:free",
+  "nvidia/nemotron-nano-9b-v2:free",
+  "openai/gpt-oss-20b:free",
+  // Tier 3: last resort
+  "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+  "meta-llama/llama-3.2-3b-instruct:free",
 ];
 
 const DEFAULT_SYSTEM = [
