@@ -1751,19 +1751,35 @@ function detectIntent(q) {
 // ===== NEXORA AI (OpenRouter via Vercel /api/chat) =====
 const NEXORA_API_URL = '/api/chat';
 async function askNexoraAI(history) {
+  // 12s timeout — free OpenRouter models can be slow; never let the user hang.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
   try {
     const r = await fetch(NEXORA_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: history })
+      body: JSON.stringify({ messages: history }),
+      signal: controller.signal,
     });
-    const data = await r.json();
-    if (r.ok && data && data.reply) return data.reply;
-    console.warn('Nexora /api/chat:', r.status, data);
-    return null;
+    clearTimeout(timeoutId);
+    let data = null;
+    try { data = await r.json(); } catch (_) { /* non-JSON body */ }
+
+    if (r.ok && data && data.reply) {
+      return { ok: true, reply: data.reply, model: data.model || null };
+    }
+
+    // Surface the real reason in the console so we can debug.
+    const errMsg = (data && (data.error || data.detail)) || `HTTP ${r.status}`;
+    console.warn('[Nexora] /api/chat failed:', r.status, data);
+    return { ok: false, reply: null, error: errMsg, status: r.status };
   } catch (e) {
-    console.warn('Nexora fetch failed:', e);
-    return null;
+    clearTimeout(timeoutId);
+    const msg = (e && e.name === 'AbortError')
+      ? 'Nexora timed out after 12s. The free model may be busy — try again in a moment.'
+      : `Network error: ${e && e.message || e}`;
+    console.warn('[Nexora] fetch error:', msg);
+    return { ok: false, reply: null, error: msg, status: 0 };
   }
 }
 
@@ -1812,11 +1828,18 @@ async function sendMessage() {
     } else {
       // No typed intent matched — ask the real Nexora AI (Vercel → OpenRouter).
       const history = chatHistory.slice(-12).map(m => ({ role: m.role, content: m.content }));
-      const [aiReply] = await Promise.all([
+      const [aiResult] = await Promise.all([
         askNexoraAI(history),
         new Promise(res => setTimeout(res, 500 + Math.random() * 400)),
       ]);
-      reply = aiReply || generateSmartReply(text);
+      if (aiResult && aiResult.ok && aiResult.reply) {
+        reply = aiResult.reply;
+      } else {
+        // Real failure — tell the user the truth so they (and we) can debug.
+        const why = (aiResult && aiResult.error) || 'unknown error';
+        console.warn('[Nexora] falling back to local reply. Reason:', why);
+        reply = generateSmartReply(text);
+      }
     }
   } catch(err) {
     reply = "⚠️ Something went wrong. Please try again!";
