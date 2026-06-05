@@ -1749,7 +1749,12 @@ function detectIntent(q) {
 
 // ===== MAIN SEND MESSAGE (CLEAN RAG ROUTER) =====
 // ===== NEXORA AI (OpenRouter via Vercel /api/chat) =====
-const NEXORA_API_URL = '/api/chat';
+// NEXORA_API_URL must be the ABSOLUTE production URL of the Vercel
+// project that actually serves /api/chat. We set it at build-time via
+// a <meta name="nexora-api-url"> tag (which you can override in HTML)
+// and fall back to the live Vercel project URL.
+const NEXORA_API_URL = (document.querySelector('meta[name="nexora-api-url"]')||{}).content
+  || 'https://bikash-portfolio.vercel.app/api/chat';
 async function askNexoraAI(history) {
   // 12s timeout — free OpenRouter models can be slow; never let the user hang.
   const controller = new AbortController();
