@@ -165,7 +165,7 @@
         <li><em>PWA</em> — Installable on Android, iOS, desktop; offline service worker (cache-first assets, network-first app shell); Cloudflare AI Worker proxy for free, CORS-safe inference</li>
         <li><em>Voice</em> — YouTube-style flashcard &amp; summary playback · ElevenLabs voice mode · IELTS 4-part preparation · BCS preparation track</li>
       </ul>
-      <a href="https://github.com/bikash-20/NEXORA-AI-ORCHESTRATION" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <a href="https://github.com/bikash-20/NEXORA-AI" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
 
@@ -199,13 +199,13 @@
       <div class="proj-arrow">→</div>
     </div>
 
-    <!-- 05: CENDRIX AI -->
+    <!-- 05: Nexora Backend -->
     <div class="proj-card">
       <div class="proj-num">05</div>
-      <span class="proj-lang">JavaScript · AI</span>
-      <h3 class="proj-title">CENDRIX AI</h3>
-      <p class="proj-desc">An experimental AI workspace project exploring <em>model routing and orchestration</em> patterns. Paired with <em>cendrix-test</em> for evaluation harnesses.</p>
-      <a href="https://github.com/bikash-20/CENDRIX-AI" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <span class="proj-lang">JavaScript · API · AI</span>
+      <h3 class="proj-title">Nexora Backend</h3>
+      <p class="proj-desc">Companion backend for the <em>Nexora AI</em> ecosystem — API surface that ties the PWA, study mode, and viva engine into a single deployable service.</p>
+      <a href="https://github.com/bikash-20/NEXORA-BACKEND" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
 
@@ -1891,7 +1891,7 @@ function detectIntent(q) {
 // a <meta name="nexora-api-url"> tag (which you can override in HTML)
 // and fall back to the live Vercel project URL.
 const NEXORA_API_URL = (document.querySelector('meta[name="nexora-api-url"]')||{}).content
-  || 'https://bikash-portfolio.vercel.app/api/chat';
+  || 'https://my-portfolio-project-rho-six.vercel.app/api/chat';
 async function askNexoraAI(history) {
   // 12s timeout — free OpenRouter models can be slow; never let the user hang.
   const controller = new AbortController();
