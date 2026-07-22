@@ -1893,9 +1893,9 @@ function detectIntent(q) {
 const NEXORA_API_URL = (document.querySelector('meta[name="nexora-api-url"]')||{}).content
   || 'https://my-portfolio-project-rho-six.vercel.app/api/chat';
 async function askNexoraAI(history) {
-  // 12s timeout — free OpenRouter models can be slow; never let the user hang.
+  // 25s timeout — Vercel cold start + free OpenRouter models can be slow on first hit.
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
   try {
     const r = await fetch(NEXORA_API_URL, {
       method: 'POST',
@@ -1918,10 +1918,10 @@ async function askNexoraAI(history) {
   } catch (e) {
     clearTimeout(timeoutId);
     const msg = (e && e.name === 'AbortError')
-      ? 'Nexora timed out after 12s. The free model may be busy — try again in a moment.'
+      ? 'Nexora timed out after 25s. The free model may be busy or the server is cold-starting — try again in a moment.'
       : `Network error: ${e && e.message || e}`;
     console.warn('[Nexora] fetch error:', msg);
-    return { ok: false, reply: null, error: msg, status: 0 };
+    return { ok: false, reply: null, error: msg, status: 0, debug: { url: NEXORA_API_URL } };
   }
 }
 
@@ -1980,7 +1980,8 @@ async function sendMessage() {
         // Real failure — tell the user the truth so they (and we) can debug.
         const why = (aiResult && aiResult.error) || 'unknown error';
         console.warn('[Nexora] falling back to local reply. Reason:', why);
-        reply = generateSmartReply(text);
+        const local = generateSmartReply(text);
+        reply = `${local}<div class="ai-debug" style="margin-top:8px;font-size:11px;opacity:.55;border-top:1px dashed rgba(255,255,255,.15);padding-top:6px;">⚠ AI offline — ${why}</div>`;
       }
     }
   } catch(err) {
