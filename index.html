@@ -144,70 +144,207 @@
     <h2 class="sec-title">Featured <span>Projects</span></h2>
   </div>
   <div class="proj-grid">
-    <div class="proj-card">
-      <div class="proj-num">01</div>
-      <div class="proj-lang">C Language</div>
-      <h3 class="proj-title">Digital Clock</h3>
-      <p class="proj-desc">Terminal-based digital clock with real-time refresh using <em>time.h</em></p>
+
+    <!-- 01: Flagship — Nexora AI learning platform -->
+    <div class="proj-card" style="border-style:solid; border-color:rgba(201,168,76,0.5); background: linear-gradient(135deg, rgba(26,92,90,0.10), rgba(61,43,86,0.14));">
+      <div class="proj-num" style="color:var(--gold-lt);">01</div>
+      <span class="proj-lang" style="color:var(--gold); border-color:rgba(201,168,76,0.45);">⚡ Flagship · Learning Platform</span>
+      <h3 class="proj-title" style="color:var(--gold-lt);">Nexora AI — Personal Learning Platform</h3>
+      <p class="proj-desc">A <em>futuristic AI learning platform</em> combining chat, study mode, viva exams, and PDF export into one installable PWA — built for IELTS &amp; BCS prep and beyond.</p>
       <ul class="proj-bullets">
-        <li> <em>POSIX Threads</em> — 3 concurrent threads running simultaneously</li>
-        <li> Mutex locks for thread-safe shared data access</li>
-        <li> Terminal UI styled with <em>ANSI escape codes</em></li>
-        <li> All states managed via single <em>ClockState</em> struct</li>
-        <li> Runs exclusively on macOS &amp; Linux</li>
+        <li><em>AI Engine</em> — Multi-key fallback (OpenRouter → Gemini Direct → Cloudflare AI Workers → Pollinations.ai) so it always has a working brain</li>
+        <li><em>AI Compare Mode</em> — Run the same question through multiple models side-by-side</li>
+        <li><em>Online / Offline toggle</em> — Built-in knowledge base + rule engine keeps it fully usable offline</li>
+        <li><em>Study Mode</em> — AI flashcards (text, image, or PDF → cards with flip animation + hints)</li>
+        <li><em>Quiz</em> — Multiple-choice with difficulty levels and AI re-explanation of wrong answers</li>
+        <li><em>Spaced Repetition (SRS)</em> — SM-2 algorithm with daily streaks and due badges</li>
+        <li><em>Summarizer</em> — Paste any text → bullets / paragraph / ELI5 / key terms / TL;DR, or compare two models</li>
+        <li><em>Viva Mode</em> — AI oral-exam simulator: question-by-question, scored critique, full grade report</li>
+        <li><em>Progress Dashboard</em> — Bar chart of study time, quiz accuracy sparkline, SRS progress, streak</li>
+        <li><em>PDF Export</em> — Print-ready SRS decks, quiz history stats table, Viva results with per-question feedback</li>
+        <li><em>PWA</em> — Installable on Android, iOS, desktop; offline service worker (cache-first assets, network-first app shell); Cloudflare AI Worker proxy for free, CORS-safe inference</li>
+        <li><em>Voice</em> — YouTube-style flashcard &amp; summary playback · ElevenLabs voice mode · IELTS 4-part preparation · BCS preparation track</li>
       </ul>
-      <a href="https://github.com/bikash-20/C-project" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <a href="https://github.com/bikash-20/NEXORA-AI-ORCHESTRATION" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
+
+    <!-- 02: Healthcare Triage AI -->
     <div class="proj-card">
       <div class="proj-num">02</div>
-      <div class="proj-lang">C++ Language</div>
-      <h3 class="proj-title">Echoes of the Void</h3>
-      <p class="proj-desc">Full text-adventure RPG with turn-based combat, puzzle mechanics, and an inventory system built with object-oriented C++.</p>
-      <a href="https://github.com/bikash-20/cpp-project/blob/main/game%20project.cpp" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <span class="proj-lang">Python · Offline PWA</span>
+      <h3 class="proj-title">Healthcare Triage AI</h3>
+      <p class="proj-desc">An <em>offline-first Progressive Web App</em> for rural health workers — bilingual intake, voice input, and anomaly detection that runs without internet.</p>
+      <a href="https://github.com/bikash-20/Healthcare-Triage-AI" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
+
+    <!-- 03: LiquiGuard — SUST hackathon -->
     <div class="proj-card">
       <div class="proj-num">03</div>
-      <div class="proj-lang">C++ · HTML · Dijkstra</div>
-      <h3 class="proj-title">Google Maps Navigator</h3>
-      <p class="proj-desc">A fully functional Google Maps-style navigation system built in C++ using the Raylib graphics library. Features <em>Dijkstra's shortest path algorithm</em> across a 15-node city graph with weighted routes, animated car movement, turn-by-turn directions, live path highlighting, and an interactive web version in HTML/JS. Left-click sets destination, right-click sets start — shortest route recalculates instantly.</p>
-      <a href="https://github.com/bikash-20/google-maps-navigator-DSA-project/blob/main/maps_dijkstra.cpp" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <span class="proj-lang">Python · PostgreSQL · SSE</span>
+      <h3 class="proj-title">LiquiGuard — Liquidity Forecasting</h3>
+      <p class="proj-desc">SUST Final Hackathon winner-era project: <em>EWMA-based liquidity forecasting</em> with anomaly detection and live SSE streaming dashboards on PostgreSQL.</p>
+      <a href="https://github.com/bikash-20/SUST-Final-hackathon-project" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
+
+    <!-- 04: Cognexa AI -->
     <div class="proj-card">
       <div class="proj-num">04</div>
-      <span class="proj-lang">HTML · CSS · JavaScript · PWA</span>
-      <h3 class="proj-title">Nexora — AI Companion</h3>
-      <p class="proj-desc">A <em>futuristic AI companion</em> web app with a sleek neon-glass UI. Chat intelligently, compare multiple AI models side-by-side, and get a synthesized verdict — all from a zero-install Progressive Web App.</p>
-      <ul class="proj-bullets">
-        <li><em>Smart Intent Engine</em> — auto-detects queries (math, currency, unit conversion, medical, tech news, conversation) and routes to the right handler</li>
-        <li><em>Multi-Model AI Compare</em> — queries several AI models in parallel and generates a final synthesis verdict</li>
-        <li><em>Voice I/O</em> — speak your prompt and hear responses read back via speech synthesis</li>
-        <li><em>Offline-Ready PWA</em> — installable on any device with a home screen icon, works without internet</li>
-        <li><em>Free &amp; Key-less</em> — uses Pollinations.ai as a fallback so it works with zero API setup</li>
-        <li><em>Memory &amp; Dark/Light Mode</em> — remembers recent context, full markdown rendering, animated UI</li>
-      </ul>
-      <a href="https://github.com/bikash-20" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <span class="proj-lang">TypeScript · FastAPI · React</span>
+      <h3 class="proj-title">Cognexa AI</h3>
+      <p class="proj-desc">Zero-signup AI chat assistant in a monorepo — <em>glass-morphic SPA</em> front-end with local document extraction. Privacy-friendly by default.</p>
+      <a href="https://github.com/bikash-20/Cognexa-AI" target="_blank" class="proj-github">⬡ View on GitHub</a>
       <div class="proj-arrow">→</div>
     </div>
-    <div class="proj-card" style="border-style:dashed; border-color:rgba(201,168,76,0.3); background: linear-gradient(135deg, rgba(26,92,90,0.07), rgba(61,43,86,0.1));">
-      <div class="proj-num" style="color:rgba(201,168,76,0.18);">05</div>
-      <span class="proj-lang" style="color:var(--gold); border-color:rgba(201,168,76,0.4);">🔬 In Progress</span>
-      <h3 class="proj-title" style="color:var(--gold-lt);">Nexora v2 — Full LLM Integration</h3>
-      <p class="proj-desc">Currently expanding Nexora with direct API integrations for the world's most powerful LLMs — turning it into a true multi-brain AI hub.</p>
-      <ul class="proj-bullets">
-        <li><em>ChatGPT (OpenAI)</em> — GPT-4o integration for deep reasoning and instruction-following</li>
-        <li><em>Claude (Anthropic)</em> — long-context analysis, coding, and nuanced conversation</li>
-        <li><em>Gemini (Google)</em> — multimodal understanding with Google's latest models</li>
-        <li><em>Perplexity AI</em> — real-time web-search-backed answers for live knowledge queries</li>
-        <li><em>Unified Compare Engine</em> — query all four simultaneously, diff responses, and generate a final AI verdict</li>
-      </ul>
-      <div style="margin-top:14px; display:flex; align-items:center; gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);animation:pulse 1.8s ease-in-out infinite;"></div>
-        <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);font-weight:600;">Actively Building</span>
-      </div>
+
+    <!-- 05: CENDRIX AI -->
+    <div class="proj-card">
+      <div class="proj-num">05</div>
+      <span class="proj-lang">JavaScript · AI</span>
+      <h3 class="proj-title">CENDRIX AI</h3>
+      <p class="proj-desc">An experimental AI workspace project exploring <em>model routing and orchestration</em> patterns. Paired with <em>cendrix-test</em> for evaluation harnesses.</p>
+      <a href="https://github.com/bikash-20/CENDRIX-AI" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
     </div>
+
+    <!-- 06: bKash complaint parser — SUST preliminary -->
+    <div class="proj-card">
+      <div class="proj-num">06</div>
+      <span class="proj-lang">FastAPI · Python · LLM</span>
+      <h3 class="proj-title">bKash Complaint Parser</h3>
+      <p class="proj-desc">SUST Preliminary Hackathon microservice — a <em>hybrid rule + LLM engine</em> that parses and classifies bKash mobile-money complaints from raw text.</p>
+      <a href="https://github.com/bikash-20/FInal-Preliminary-Test-SUST-Hackathon" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 07: Cake e-commerce -->
+    <div class="proj-card">
+      <div class="proj-num">07</div>
+      <span class="proj-lang">React · TypeScript · Tailwind</span>
+      <h3 class="proj-title">Cake E-Commerce Studio</h3>
+      <p class="proj-desc">An <em>artisan cake studio storefront</em> — modern React + TypeScript storefront with Tailwind styling, product catalog, and smooth checkout flow.</p>
+      <a href="https://github.com/bikash-20/cake-e-commerce-website" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 08: Coffee shop e-commerce -->
+    <div class="proj-card">
+      <div class="proj-num">08</div>
+      <span class="proj-lang">JavaScript · Vite · AI · RAG</span>
+      <h3 class="proj-title">Coffee Shop E-Commerce</h3>
+      <p class="proj-desc">A <em>viral-aesthetic coffee shop storefront</em> built with Vite — AI-powered product discovery and <em>edge-optimized RAG</em> for fast recommendations.</p>
+      <a href="https://github.com/bikash-20/Coffeshop-E-Commerce-Website" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 09: Car Rental -->
+    <div class="proj-card">
+      <div class="proj-num">09</div>
+      <span class="proj-lang">Java · Spring Boot 3</span>
+      <h3 class="proj-title">Car Rental Management System</h3>
+      <p class="proj-desc">2nd-year Java project — a <em>3-layer Spring Boot 3 architecture</em> for car rentals with H2 persistence, iText PDF invoices, Chart.js dashboards, and an AI assistant.</p>
+      <a href="https://github.com/bikash-20/2nd-year-java-project" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 10: Blood Bank -->
+    <div class="proj-card">
+      <div class="proj-num">10</div>
+      <span class="proj-lang">Java · Spring Boot · JS</span>
+      <h3 class="proj-title">Blood Bank Management System</h3>
+      <p class="proj-desc">Full-stack <em>Blood Bank platform</em> with real-time dashboards, donor/recipient matching, and an operational v2 backend ready for production deployment.</p>
+      <a href="https://github.com/bikash-20/bloodbank-managmentsystem-project-version-2" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 11: Iskcon Youth Forum -->
+    <div class="proj-card">
+      <div class="proj-num">11</div>
+      <span class="proj-lang">TypeScript · Forum</span>
+      <h3 class="proj-title">Iskcon Youth Forum — Sylhet</h3>
+      <p class="proj-desc">A community/forum platform for the ISKCON youth chapter in Sylhet — built with TypeScript for fast iteration and clean moderation tooling.</p>
+      <a href="https://github.com/bikash-20/Iskcon-youth-forum-sylhet" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 12: Mobile Money Balance Viewer -->
+    <div class="proj-card">
+      <div class="proj-num">12</div>
+      <span class="proj-lang">TypeScript · Multi-Provider</span>
+      <h3 class="proj-title">Mobile Money Balance Viewer</h3>
+      <p class="proj-desc">A <em>multi-provider balance dashboard</em> (bKash, Nagad, Rocket) that unifies all your mobile-money wallets in one read-only TypeScript view.</p>
+      <a href="https://github.com/bikash-20/-multi-provider-mobile-money-balance-viewer-bKash-Nagad-Rocket-" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 13: ATM simulation -->
+    <div class="proj-card">
+      <div class="proj-num">13</div>
+      <span class="proj-lang">Java · Java 17</span>
+      <h3 class="proj-title">ATM Simulation (Java 17)</h3>
+      <p class="proj-desc">A clean <em>Java 17 ATM simulator</em> — deposit, withdraw, balance, mini-statement, and PIN management with object-oriented design.</p>
+      <a href="https://github.com/bikash-20/ATM-SIMULATION-JAVA-17-PROJECT" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 14: Mood Map AI -->
+    <div class="proj-card">
+      <div class="proj-num">14</div>
+      <span class="proj-lang">TypeScript · AI</span>
+      <h3 class="proj-title">Mood Map AI</h3>
+      <p class="proj-desc">An AI mood-mapping TypeScript app that visualizes emotional patterns from text inputs into an explorable, color-graded map.</p>
+      <a href="https://github.com/bikash-20/mood-map-ai" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 15: QueueStorm -->
+    <div class="proj-card">
+      <div class="proj-num">15</div>
+      <span class="proj-lang">Python · Backend</span>
+      <h3 class="proj-title">QueueStorm</h3>
+      <p class="proj-desc">A <em>Python queue management</em> system exploring worker scheduling, job retries, and backpressure handling for high-throughput pipelines.</p>
+      <a href="https://github.com/bikash-20/queuestorm" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 16: Ticket Analyzer -->
+    <div class="proj-card">
+      <div class="proj-num">16</div>
+      <span class="proj-lang">JavaScript · NLP</span>
+      <h3 class="proj-title">Ticket Analyzer (SUST Hackathon)</h3>
+      <p class="proj-desc">SUST Hackathon submission — a <em>support ticket analyzer</em> that auto-categorizes, prioritizes, and summarizes incoming tickets in JavaScript.</p>
+      <a href="https://github.com/bikash-20/ticket-analyzer--sust-hackathon-task" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 17: MU Faculty Directory -->
+    <div class="proj-card">
+      <div class="proj-num">17</div>
+      <span class="proj-lang">HTML · Static</span>
+      <h3 class="proj-title">MU Faculty Directory</h3>
+      <p class="proj-desc">A lightweight <em>HTML directory of Metropolitan University</em> faculty — departments, contacts, and office hours in one searchable page.</p>
+      <a href="https://github.com/bikash-20/MU-FACULTY-DIRECTORY" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+    <!-- 18: Realistic Map -->
+    <div class="proj-card">
+      <div class="proj-num">18</div>
+      <span class="proj-lang">C++ · Graphics</span>
+      <h3 class="proj-title">Realistic Map (C++)</h3>
+      <p class="proj-desc">A <em>C++ graphics project</em> rendering a realistic procedural map — terrain, water, and overlays built with native rendering primitives.</p>
+      <a href="https://github.com/bikash-20/realistic-map" target="_blank" class="proj-github">⬡ View on GitHub</a>
+      <div class="proj-arrow">→</div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; margin-top:36px;">
+    <a href="https://github.com/bikash-20?tab=repositories" target="_blank" class="proj-github" style="display:inline-flex;">
+      ⬡ See all 60+ repositories on GitHub
+    </a>
   </div>
 </section>
 
