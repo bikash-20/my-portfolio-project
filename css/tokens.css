@@ -1,0 +1,70 @@
+:root {
+  --white:   #F0F2F5;
+  --steel:   #B8C4D4;
+  --slate:   #6B7E96;
+  --teal:    #1A5C5A;
+  --dark:    #1A1D22;
+  --gold:    #C9A84C;
+  --gold-lt: #E2C97E;
+  --dark2:   #13161A;
+  --teal-lt: #226b69;
+  --teal-glow: rgba(26,92,90,0.35);
+  --neon: #1DD8D5;
+  --purple-glow: #3D2B56;
+
+  /* Surface tokens — replace ad-hoc rgba(255,255,255,0.0X) with these */
+  --surface:    rgba(255,255,255,0.04);
+  --surface-2:  rgba(255,255,255,0.07);
+  --surface-3:  rgba(255,255,255,0.10);
+  --border:     rgba(255,255,255,0.08);
+  --shadow-lg:  0 24px 60px rgba(0,0,0,0.55);
+  --accent-soft: rgba(201,168,76,0.08);
+  --accent-soft-2: rgba(201,168,76,0.16);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--dark);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* CURSOR */
+/* Cursor — hidden on touch/coarse pointers */
+@media (hover: none), (pointer: coarse) {
+  html, body, a, button, .skill-pill, .proj-card, .res-card, .c-link { cursor: auto !important; }
+  .cursor, .cursor-ring { display: none !important; }
+}
+/* Cursor — hide native caret while overlay is visible */
+@media (hover: hover) and (pointer: fine) {
+  html, body, a, button, .skill-pill, .proj-card, .res-card, .c-link { cursor: none; }
+}
+.cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--gold); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s, opacity .15s;
+}
+.cursor-ring {
+  position: fixed; width: 30px; height: 30px;
+  border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 50%; pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, opacity .15s;
+}
+/* Hide overlay cursors during text selection so they don't snap to highlights */
+body.is-selecting .cursor,
+body.is-selecting .cursor-ring { opacity: 0 !important; }
+
+
+/* NOISE */
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 800; opacity: 0.4;
+}
+

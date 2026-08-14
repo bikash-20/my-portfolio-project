@@ -1,0 +1,56 @@
+/* ===== ACCESSIBILITY ===== */
+/* Keyboard focus rings (skip for click/touch via :focus-visible) */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Chat input is the one place we explicitly want focus styling */
+.chat-input:focus-visible { outline-color: rgba(147,112,219,.7); }
+
+/* Respect reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cursor, .cursor-ring { display: none !important; }
+  html, body, a, button, .skill-pill, .proj-card, .res-card, .c-link { cursor: auto !important; }
+}
+
+/* ===== CHAT UX (Stop / Copy) ===== */
+.chat-stop {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: var(--white);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.chat-stop:hover { background: rgba(255,80,80,0.15); border-color: rgba(255,80,80,0.4); }
+
+.chat-msg.bot { position: relative; }
+.bubble-copy {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 24px; height: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  color: rgba(240,242,245,0.5);
+  font-size: 13px;
+  display: grid; place-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s, color .15s, background .15s;
+}
+.chat-msg.bot:hover .bubble-copy,
+.bubble-copy:focus-visible { opacity: 1; }
+.bubble-copy:hover { color: var(--gold); background: rgba(201,168,76,0.1); }
+.bubble-copy.copied { color: var(--gold); opacity: 1; }

@@ -1,0 +1,63 @@
+/* ===== CONTACT ===== */
+.contact-bg { background:linear-gradient(180deg,var(--dark2) 0%,var(--dark) 100%); }
+
+.contact-inner { display:grid; grid-template-columns:1fr 1fr; gap:68px; align-items:start; }
+.contact-left h3 {
+  font-family:'DM Serif Display',serif;
+  font-size:18px; color:var(--steel); margin-bottom:12px;
+}
+.contact-left p { font-size:15px; font-weight:300; line-height:1.85; color:rgba(240,242,245,0.72); margin-bottom:32px; }
+
+.c-links { display:flex; flex-direction:column; gap:12px; }
+.c-link {
+  display:flex; align-items:center; gap:14px;
+  padding:16px 20px;
+  background:rgba(240,242,245,0.02);
+  border:1px solid rgba(184,196,212,0.08);
+  border-radius:12px; text-decoration:none; transition:all .3s;
+}
+.c-link:hover { border-color:var(--gold); background:rgba(201,168,76,0.07); transform:translateX(6px); }
+.c-ico {
+  width:38px; height:38px; background:rgba(26,92,90,0.25); border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0; transition:background .3s;
+}
+.c-link:hover .c-ico { background:rgba(201,168,76,0.2); }
+.c-text { flex:1; }
+.c-label {
+  font-size:9px; letter-spacing:2px; text-transform:uppercase;
+  color:rgba(240,242,245,0.55); display:block; margin-bottom:2px; font-weight:600;
+}
+.c-val { font-size:13px; font-weight:600; color:var(--white); }
+.c-arr { font-size:14px; color:var(--gold); opacity:0; transform:translateX(-8px); transition:all .3s; }
+.c-link:hover .c-arr { opacity:1; transform:translateX(0); }
+
+.contact-art {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(54px,7vw,92px);
+  letter-spacing:4px; line-height:.88;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(240,242,245,0.04);
+  user-select:none; text-align:right; padding-top:16px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background:#0e1114; padding:28px 72px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid rgba(184,196,212,0.06);
+}
+.f-left { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--gold); }
+.f-left span { color:rgba(240,242,245,0.2); }
+.f-right { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(240,242,245,0.18); }
+
+/* ===== TYPING EFFECT ===== */
+.type-cursor {
+  display: inline-block;
+  color: var(--gold);
+  animation: blink 0.75s step-end infinite;
+  margin-left: 1px;
+  font-weight: 300;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }

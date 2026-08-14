@@ -74,12 +74,23 @@ endpoint is available.
 ```
 .
 ├── index.html              # single-page site (all sections + chat UI)
-├── style.css               # all styles
+├── css/
+│   ├── tokens.css          # design tokens, base reset, cursor gates
+│   ├── layout.css          # nav, hero, divider, about strip, sections
+│   ├── content.css         # skills, projects, research, achievements
+│   ├── contact.css         # contact form, footer, typing effect
+│   ├── dashboard.css       # weather + LeetCode dashboard cards
+│   ├── chat.css            # chatbot shell, FAB glow, code blocks, fullscreen
+│   ├── a11y.css            # focus rings, reduced-motion, chat UX (Stop/Copy)
+│   └── responsive-mobile.css # mobile polish + responsive @media blocks
 ├── 404.html                # themed not-found page
 ├── js/
 │   ├── loaders.js          # time / GitHub / Codeforces / LeetCode loaders
-│   ├── nexora.js           # chat engines + AI ask
-│   ├── ui.js               # cursor, nav observer, typing, skill bars
+│   ├── nexora-quote.js     # dev quote loader (small, runs first)
+│   ├── nexora-engines.js   # local engines: weather, calc, convert, currency, password
+│   ├── nexora-convo.js     # BIKASH_SYSTEM + smart-reply + conversational engine v3
+│   ├── nexora-core.js      # sendMessage, OpenRouter streaming, markdown render, debug
+│   ├── ui.js               # cursor, nav observer, typing, skill bars, fullscreen
 │   ├── weather.js          # browser-side weather loader (proxied)
 │   └── leetcode.js         # LeetCode stats fallback
 ├── assets/
