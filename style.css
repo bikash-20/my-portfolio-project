@@ -358,6 +358,14 @@ nav a:hover {
 .skills-bg { background: linear-gradient(180deg, var(--dark) 0%, #13161a 100%); }
 
 .skill-pills { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:48px; }
+.skill-group { margin-bottom:28px; }
+.skill-group:last-of-type { margin-bottom:48px; }
+.skill-cat {
+  display:block;
+  font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  color:rgba(201,168,76,0.85); font-weight:600;
+  margin-bottom:12px;
+}
 .skill-pill {
   display:inline-flex; align-items:center; gap:8px;
   padding:10px 18px;
