@@ -98,3 +98,112 @@ document.addEventListener('selectionchange', () => {
     document.body.classList.toggle('is-selecting', selecting);
   }
 });
+
+// ===== Chat fullscreen toggle =====
+(() => {
+  const panel = document.getElementById('chatPanel');
+  const btn = document.getElementById('chatFullscreen');
+  if (!panel || !btn) return;
+  const setIcon = (on) => { btn.textContent = on ? '⤡' : '⛶'; btn.classList.toggle('is-active', on); };
+  const enter = () => {
+    panel.classList.add('is-fullscreen');
+    document.body.classList.add('chat-locked');
+    setIcon(true);
+    try {
+      const ms = document.getElementById('chatMessages');
+      if (ms) ms.scrollTop = ms.scrollHeight;
+    } catch {}
+  };
+  const exit = () => {
+    panel.classList.remove('is-fullscreen');
+    document.body.classList.remove('chat-locked');
+    setIcon(false);
+  };
+  btn.addEventListener('click', () => {
+    if (panel.classList.contains('is-fullscreen')) exit();
+    else enter();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('is-fullscreen')) exit();
+  });
+  // If chat closes, leave fullscreen
+  const close = document.getElementById('chatClose');
+  if (close) close.addEventListener('click', () => { try { exit(); } catch {} }, { capture: true });
+})();
+
+// ===== Code-block copy buttons (delegated) =====
+// After a chat bubble's HTML is set, run this to attach copy buttons on <pre>.
+window.decorateCodeBlocks = function decorateCodeBlocks(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  scope.querySelectorAll('pre').forEach((pre) => {
+    if (pre.querySelector(':scope > .code-copy')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'code-copy';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    pre.appendChild(btn);
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code');
+      const text = code ? code.innerText : pre.innerText;
+      let ok = false;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      } catch {}
+      btn.textContent = ok ? 'Copied!' : 'Failed';
+      btn.classList.toggle('is-copied', ok);
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('is-copied'); }, 1400);
+    });
+  });
+};
+
+// MutationObserver: auto-decorate new code blocks as they appear in chat.
+(() => {
+  const ms = document.getElementById('chatMessages');
+  if (!ms || typeof MutationObserver === 'undefined') return;
+  const mo = new MutationObserver((muts) => {
+    for (const m of muts) {
+      m.addedNodes.forEach((n) => {
+        if (n.nodeType === 1) {
+          if (n.matches && n.matches('pre, pre code')) {
+            window.decorateCodeBlocks(n.parentElement || n);
+          } else if (n.querySelectorAll) {
+            window.decorateCodeBlocks(n);
+          }
+        }
+      });
+    }
+  });
+  mo.observe(ms, { childList: true, subtree: true });
+})();
+
+// ===== Relative timestamps under chat bubbles =====
+(() => {
+  const fmt = (iso) => {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 5) return 'just now';
+    if (diff < 60) return Math.floor(diff) + 's ago';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+  const tick = () => {
+    document.querySelectorAll('.chat-msg [data-time]').forEach((el) => {
+      const t = el.getAttribute('data-time');
+      if (t) el.textContent = fmt(t);
+    });
+  };
+  setInterval(tick, 30000);
+  // First pass shortly after load so existing bubbles show.
+  setTimeout(tick, 1500);
+})();

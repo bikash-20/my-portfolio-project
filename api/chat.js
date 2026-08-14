@@ -103,6 +103,44 @@ const json = (res, status, body) => {
   res.status(status).json(body);
 };
 
+// Decide whether the caller wants streaming. We accept either:
+//   - body.stream === true (preferred — survives GET caching middleware)
+//   - query param ?stream=1 / ?stream=true
+// Anything else → buffered JSON (legacy behavior).
+const wantsStream = (req, body) => {
+  if (body && body.stream === true) return true;
+  const url = (req && req.url) || "";
+  const m = url.match(/[?&]stream=([^&]+)/);
+  return !!(m && (m[1] === "1" || m[1] === "true"));
+};
+
+// Start an SSE response. Vercel's Node runtime supports res.write/end on the
+// legacy interface, which is what we want here — it's the most reliable path
+// for chunked streaming across Vercel plan tiers (Hobby/Pro).
+const startSSE = (res) => {
+  setCORS(res);
+  res.status(200);
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no"); // disable proxy buffering
+  if (typeof res.flushHeaders === "function") res.flushHeaders();
+};
+
+const sseEvent = (res, data) => {
+  // Each OpenRouter SSE message is itself a `data: {json}\n\n`. We wrap our
+  // own payload in a `{delta, finishReason, model, error}` envelope so the
+  // browser doesn't have to know about OpenRouter's wire format.
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+  if (typeof res.flush === "function") res.flush();
+};
+
+const endSSE = (res) => {
+  res.write("data: [DONE]\n\n");
+  if (typeof res.flush === "function") res.flush();
+  res.end();
+};
+
 const readBody = async (req) => {
   if (req.body && typeof req.body === "object") return req.body;
   if (typeof req.body === "string") {
@@ -120,7 +158,7 @@ const readBody = async (req) => {
   });
 };
 
-const callOpenRouter = async ({ apiKey, model, messages, referer, title, signal }) => {
+const callOpenRouterBuffered = async ({ apiKey, model, messages, referer, title, signal }) => {
   const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     signal,
@@ -135,7 +173,6 @@ const callOpenRouter = async ({ apiKey, model, messages, referer, title, signal 
       messages,
       temperature: 0.7,
       max_tokens: 600,
-      // We don't stream from the serverless side — keep it simple + resilient.
       stream: false,
     }),
   });
@@ -143,6 +180,98 @@ const callOpenRouter = async ({ apiKey, model, messages, referer, title, signal 
   let data;
   try { data = JSON.parse(text); } catch { data = { raw: text }; }
   return { ok: r.ok, status: r.status, data };
+};
+
+// Streaming variant: returns an upstream Response so the caller can read its
+// body chunk by chunk. We do NOT consume the body here — the handler owns the
+// pump so it can flush chunks to the client as they arrive.
+const callOpenRouterStream = async ({ apiKey, model, messages, referer, title, signal }) => {
+  return await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    signal,
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": referer || "https://bikash-20.github.io",
+      "X-Title": title || "Bikash Talukder | Portfolio",
+      "Accept": "text/event-stream",
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.7,
+      max_tokens: 600,
+      stream: true,
+    }),
+  });
+};
+
+// Read an SSE byte stream from `upstream`, parse each `data: {...}` event, and
+// forward extracted deltas to `onDelta(delta, finishReason)`. Returns the
+// finish reason of the last event ("stop" | "length" | etc.) or null on error.
+const pumpSSE = async (upstream, onDelta) => {
+  if (!upstream.body || !upstream.body.getReader) {
+    throw new Error("Upstream response has no readable body.");
+  }
+  const reader = upstream.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
+  let finishReason = null;
+
+  // SSE events are separated by a blank line. Each event may span multiple
+  // chunks — we keep a buffer and split on \n\n, then on \n for multi-line
+  // data fields. OpenRouter only sends single-line `data: ...` per event.
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    let idx;
+    while ((idx = buffer.indexOf("\n\n")) !== -1) {
+      const rawEvent = buffer.slice(0, idx);
+      buffer = buffer.slice(idx + 2);
+      const lines = rawEvent.split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const payload = trimmed.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        let parsed;
+        try { parsed = JSON.parse(payload); }
+        catch { continue; }
+        const choice = parsed.choices && parsed.choices[0];
+        if (!choice) continue;
+        const delta = choice.delta && choice.delta.content;
+        if (typeof delta === "string" && delta.length) {
+          onDelta(delta, choice.finish_reason || null);
+        }
+        if (choice.finish_reason) finishReason = choice.finish_reason;
+      }
+    }
+  }
+
+  // Flush trailing decoder bytes in case the last chunk lacked \n\n.
+  buffer += decoder.decode();
+  if (buffer.trim()) {
+    const lines = buffer.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const payload = trimmed.slice(5).trim();
+      if (!payload || payload === "[DONE]") continue;
+      let parsed;
+      try { parsed = JSON.parse(payload); } catch { continue; }
+      const choice = parsed.choices && parsed.choices[0];
+      if (!choice) continue;
+      const delta = choice.delta && choice.delta.content;
+      if (typeof delta === "string" && delta.length) {
+        onDelta(delta, choice.finish_reason || null);
+      }
+      if (choice.finish_reason) finishReason = choice.finish_reason;
+    }
+  }
+
+  return finishReason;
 };
 
 // ---------- handler ----------
@@ -182,17 +311,71 @@ module.exports = async (req, res) => {
 
   const messages = [{ role: "system", content: systemMsg }, ...cleaned];
 
+  const streaming = wantsStream(req, body);
+
   // Try primary model, then fallbacks on 429 / 5xx.
   const preferred = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
   const candidates = [preferred, ...MODEL_FALLBACKS.filter((m) => m !== preferred)];
-
   const referer = process.env.OPENROUTER_REFERER || (req.headers && (req.headers.referer || req.headers.origin));
   const title = process.env.OPENROUTER_TITLE;
 
+  // ---------- STREAMING PATH ----------
+  if (streaming) {
+    let lastError = null;
+    for (const model of candidates) {
+      try {
+        const upstream = await callOpenRouterStream({
+          apiKey, model, messages, referer, title,
+        });
+        if (!upstream.ok) {
+          // Read a small preview for diagnostics then discard.
+          let preview = "";
+          try { preview = (await upstream.text()).slice(0, 500); } catch {}
+          lastError = { status: upstream.status, data: preview, model };
+          // Continue to next fallback for retryable status codes only.
+          if (upstream.status === 429 || upstream.status === 404 || upstream.status >= 500) continue;
+          // Non-retryable 4xx: surface to client via SSE error event.
+          startSSE(res);
+          sseEvent(res, { error: "Upstream error", status: upstream.status, model, detail: preview });
+          endSSE(res);
+          return;
+        }
+        // Success — start the SSE stream and pump chunks through.
+        startSSE(res);
+        sseEvent(res, { model }); // tell the client which model answered
+        let aborted = false;
+        try {
+          await pumpSSE(upstream, (delta, finishReason) => {
+            if (aborted) return;
+            sseEvent(res, { delta, finishReason });
+          });
+        } catch (e) {
+          // Pump failure mid-stream — surface but don't double-end.
+          try { sseEvent(res, { error: `Stream interrupted: ${String(e && e.message || e)}` }); } catch {}
+        }
+        endSSE(res);
+        return;
+      } catch (e) {
+        lastError = { status: 0, data: { message: String(e && e.message || e) }, model };
+        // network blip → try next
+      }
+    }
+    // We never managed to start a stream — open an SSE channel just to report the error.
+    try {
+      startSSE(res);
+      sseEvent(res, { error: "All OpenRouter models failed.", lastError });
+      endSSE(res);
+    } catch {
+      json(res, 502, { error: "All OpenRouter models failed.", lastError });
+    }
+    return;
+  }
+
+  // ---------- BUFFERED (LEGACY) PATH ----------
   let lastError = null;
   for (const model of candidates) {
     try {
-      const { ok, status, data } = await callOpenRouter({
+      const { ok, status, data } = await callOpenRouterBuffered({
         apiKey, model, messages, referer, title,
       });
 
