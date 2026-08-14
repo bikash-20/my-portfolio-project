@@ -1634,7 +1634,7 @@ async function sendMessage() {
 // If the helper libraries fail to load (CDN blocked, offline, etc.) we fall
 // back to a plain-text-with-newlines render so the UI never breaks.
 function renderMarkdownToSafeHTML(plain) {
-  const safePlain = String(plain == null ? '' : plain);
+  let safePlain = String(plain == null ? '' : plain);
   if (typeof window.marked === 'function' && typeof window.DOMPurify === 'object') {
     try {
       // Configure marked: GitHub-style, but disable its own escaping — we
@@ -1642,6 +1642,14 @@ function renderMarkdownToSafeHTML(plain) {
       if (typeof window.marked.setOptions === 'function') {
         window.marked.setOptions({ breaks: true, gfm: true });
       }
+      // ---- 0. Convert Python-style docstring fences ('''python ... ''') into
+      // standard markdown fences so marked produces a real <pre><code>.
+      // The free-tier Llama 3.3 model occasionally emits this idiom instead
+      // of proper ``` fences.
+      safePlain = safePlain.replace(
+        /(?:^|\n)'''([a-zA-Z+#-]*)\n([\s\S]*?)\n'''/g,
+        (_, lang, code) => '\n```' + (lang || '') + '\n' + code + '\n```\n'
+      );
       const raw = window.marked.parse(safePlain);
       const clean = window.DOMPurify.sanitize(raw, {
         ADD_ATTR: ['target', 'rel'],
@@ -1652,11 +1660,44 @@ function renderMarkdownToSafeHTML(plain) {
       // serialize back to HTML.
       const tpl = document.createElement('template');
       tpl.innerHTML = clean;
-      if (window.hljs && typeof window.hljs.highlightElement === 'function') {
-        tpl.content.querySelectorAll('pre code').forEach((el) => {
-          try { window.hljs.highlightElement(el); } catch {}
-        });
+
+      // ---- 1. Mark code blocks that are missing a `language-*` hint.
+      // The AI sometimes opens a "code block" with Python-style docstring
+      // delimiters ('''python ... ''') or with plain ``` and no language;
+      // marked already wrapped those in <pre><code>, but the <code> element
+      // has no class so hljs cannot auto-detect. Tag every such block with
+      // a generic "language-text" so hljs still paints token classes.
+      tpl.content.querySelectorAll('pre code').forEach((codeEl) => {
+        if (!codeEl.className || !/language-|^hljs$/.test(codeEl.className)) {
+          codeEl.classList.add('language-text');
+        }
+        // Ensure the parent <pre> has the hljs host class so the theme's
+        // background applies (atom-one-dark targets `.hljs`).
+        const pre = codeEl.parentElement;
+        if (pre && !pre.classList.contains('hljs')) pre.classList.add('hljs');
+      });
+
+      // ---- 2. Highlight with hljs. If hljs isn't loaded yet (the bundle is
+      // heavy and the streaming reply can complete before defer scripts run),
+      // wait up to ~2s for it to show up, then continue. This avoids the
+      // "everything is plain white" symptom users see on first reply.
+      const tryHighlight = () => {
+        if (window.hljs && typeof window.hljs.highlightElement === 'function') {
+          tpl.content.querySelectorAll('pre code').forEach((el) => {
+            try { window.hljs.highlightElement(el); } catch {}
+          });
+          return true;
+        }
+        return false;
+      };
+      if (!tryHighlight()) {
+        let waited = 0;
+        const wait = setInterval(() => {
+          waited += 100;
+          if (tryHighlight() || waited >= 2000) clearInterval(wait);
+        }, 100);
       }
+
       if (window.renderMathInElement) {
         try {
           window.renderMathInElement(tpl.content, {

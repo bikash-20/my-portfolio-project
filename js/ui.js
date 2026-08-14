@@ -137,6 +137,16 @@ window.decorateCodeBlocks = function decorateCodeBlocks(root) {
   const scope = root && root.querySelectorAll ? root : document;
   scope.querySelectorAll('pre').forEach((pre) => {
     if (pre.querySelector(':scope > .code-copy')) return;
+    // Add a language tag pill if the inner <code> declares a language-* class
+    const code = pre.querySelector('code');
+    if (code && !pre.querySelector(':scope > .lang-tag')) {
+      const m = (code.className || '').match(/language-([\w+#-]+)/);
+      const lang = m ? m[1] : 'code';
+      const tag = document.createElement('span');
+      tag.className = 'lang-tag';
+      tag.textContent = lang.toUpperCase();
+      pre.appendChild(tag);
+    }
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'code-copy';
@@ -144,7 +154,6 @@ window.decorateCodeBlocks = function decorateCodeBlocks(root) {
     btn.setAttribute('aria-label', 'Copy code');
     pre.appendChild(btn);
     btn.addEventListener('click', async () => {
-      const code = pre.querySelector('code');
       const text = code ? code.innerText : pre.innerText;
       let ok = false;
       try {
