@@ -1,30 +1,32 @@
-// ===== LIVE WEATHER (OpenWeatherMap) =====
+// ===== LIVE WEATHER (proxied via /api/weather) =====
+// The OpenWeatherMap key lives in the serverless function now, so we never
+// ship a secret to the browser.
 async function loadWeather() {
   try {
-    const r = await fetch('https://api.openweathermap.org/data/2.5/weather?q=Dhaka&units=metric&appid=0aeba4fa4e8557301371ec85f6202f8a');
+    const r = await fetch("/api/weather", { cache: "no-store" });
     const d = await r.json();
-    if (d.main) {
-      const temp = Math.round(d.main.temp);
-      const feels = Math.round(d.main.feels_like);
-      const humidity = d.main.humidity;
-      const windSpeed = d.wind ? Math.round(d.wind.speed * 3.6) : '—';
-      const desc = d.weather[0].description;
-      const iconMap = { '01d':'☀️','01n':'🌙','02d':'⛅','02n':'🌥','03d':'☁️','03n':'☁️','04d':'☁️','04n':'☁️','09d':'🌧','09n':'🌧','10d':'🌦','10n':'🌧','11d':'⛈','11n':'⛈','13d':'❄️','13n':'❄️','50d':'🌫','50n':'🌫' };
-      const ic = d.weather[0].icon;
-      const icon = iconMap[ic] || '🌡';
-      document.getElementById('weatherTemp').textContent = temp + '°C';
-      document.getElementById('weatherDesc').textContent = icon + ' ' + desc.charAt(0).toUpperCase() + desc.slice(1) + ' · Feels ' + feels + '°C · 💧 ' + humidity + '% · 💨 ' + windSpeed + 'km/h';
-      const iconEl = document.querySelector('#weatherCard .dash-icon');
-      if (iconEl) iconEl.textContent = icon;
-      // Store globally for Nexora chat
-      window._weatherData = { temp, feels, humidity, windSpeed, desc: desc.charAt(0).toUpperCase() + desc.slice(1), icon };
-    } else {
-      document.getElementById('weatherTemp').textContent = 'N/A';
-      document.getElementById('weatherDesc').textContent = 'API key activating — try again in a few minutes';
+
+    if (!r.ok || d.error) {
+      console.warn("[weather] /api/weather error:", d.error);
+      document.getElementById("weatherTemp").textContent = "—";
+      document.getElementById("weatherDesc").textContent = "Weather unavailable";
+      return;
     }
-  } catch(e) {
-    document.getElementById('weatherTemp').textContent = '—';
-    document.getElementById('weatherDesc').textContent = 'Weather unavailable';
+
+    document.getElementById("weatherTemp").textContent = d.temp + "°C";
+    document.getElementById("weatherDesc").textContent =
+      `${d.icon} ${d.desc} · Feels ${d.feels}°C · 💧 ${d.humidity}%` +
+      (d.windSpeed != null ? ` · 💨 ${d.windSpeed}km/h` : "");
+
+    const iconEl = document.querySelector("#weatherCard .dash-icon");
+    if (iconEl) iconEl.textContent = d.icon;
+
+    // Stash for the Nexora chat if it ever wants to reference it.
+    window._weatherData = d;
+  } catch (e) {
+    console.warn("[weather] fetch failed:", e && e.message);
+    document.getElementById("weatherTemp").textContent = "—";
+    document.getElementById("weatherDesc").textContent = "Weather unavailable";
   }
 }
 loadWeather();
