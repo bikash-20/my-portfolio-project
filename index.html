@@ -79,6 +79,15 @@
 </head>
 <body>
 
+<!-- Preloader -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <div class="preloader-logo">BT<span>.</span></div>
+    <div class="preloader-bar"><div class="preloader-fill" id="preloaderFill"></div></div>
+    <div class="preloader-text">Loading portfolio…</div>
+  </div>
+</div>
+
 <div class="cursor" id="cur" aria-hidden="true"></div>
 <div class="cursor-ring" id="curR" aria-hidden="true"></div>
 
@@ -787,6 +796,11 @@ LET'S<br>TALK<br>CODE
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" defer></script>
 
+  <!-- Animation libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js" defer></script>
+
   <script src="js/loaders.js" defer></script>
   <script src="js/nexora-quote.js" defer></script>
   <script src="js/nexora-engines.js" defer></script>
@@ -794,6 +808,7 @@ LET'S<br>TALK<br>CODE
   <script src="js/nexora-core.js" defer></script>
   <script src="js/ui.js" defer></script>
   <script src="js/weather.js" defer></script>
+  <script src="js/nexora-animations.js" defer></script>
   <script src="js/leetcode.js" defer></script>
 </body>
 </html>
